@@ -13,7 +13,11 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.trajectory.TrajectoryConfig;
 import edu.wpi.first.math.trajectory.TrajectoryGenerator;
+import edu.wpi.first.networktables.GenericEntry;
+import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import frc.robot.Constants.AutoConstants;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.ModuleConstants;
@@ -40,6 +44,9 @@ public class RobotContainer {
   // The robot's subsystems
   private final DriveSubsystem m_robotDrive = new DriveSubsystem();
 
+  private final GenericEntry motorSpeedEntry;
+  private final GenericEntry robotStatusEntry;
+
   // The driver's controller
   CommandXboxController m_driverController = new CommandXboxController(OIConstants.kDriverControllerPort);
 
@@ -51,6 +58,12 @@ public class RobotContainer {
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
+
+    ShuffleboardTab diagnosticsTab = Shuffleboard.getTab("Diagnostics");
+
+    motorSpeedEntry = diagnosticsTab.add("Motor Speed", 0).getEntry();
+    robotStatusEntry = diagnosticsTab.add("Robot Status", "OK").getEntry();
+
     // Configure the button bindings
     configureButtonBindings();
 
@@ -87,6 +100,7 @@ m_driverController
         Commands.run(
           () -> {
             motorName.set(0.0);
+            updateShuffleboard(0.0, "Teleop");
           }
         )
     )
@@ -97,6 +111,7 @@ m_driverController
           () -> {
             //input = Math.min(((input+0.01)), 1.0) ;
             motorName.set(0.2);
+            updateShuffleboard(0.2, "Teleop");
           }
         )
     )
@@ -116,6 +131,7 @@ m_driverController
         Commands.run(
           () -> {
             motorName.set(0.0);
+            updateShuffleboard(0.0, "Teleop");
           }
         )
     )
@@ -125,7 +141,8 @@ m_driverController
         Commands.run(
           () -> {
             //input = Math.min(((input+0.01)), 1.0) ;
-            motorName.set(-1.0);
+            motorName.set(-0.2);
+            updateShuffleboard(-0.2, "Teleop");
           }
         )
     )
@@ -138,6 +155,11 @@ m_driverController
         )
 );
 
+  }
+
+  public void updateShuffleboard(double motorSpeed, String status) {
+    motorSpeedEntry.setDouble(motorSpeed);
+    robotStatusEntry.setString(status);
   }
 
   /**
