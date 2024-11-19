@@ -6,6 +6,7 @@ package frc.robot;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
+import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -42,7 +43,11 @@ public class RobotContainer {
   // The driver's controller
   CommandXboxController m_driverController = new CommandXboxController(OIConstants.kDriverControllerPort);
 
+  SlewRateLimiter filter = new SlewRateLimiter(0.5);
+
   TalonFX motorName = new TalonFX(0);
+
+  Double input = 0.0;
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
@@ -81,7 +86,7 @@ m_driverController
     Commands.sequence(
         Commands.run(
           () -> {
-            motorName.set(-1.0);
+            motorName.set(0.0);
           }
         )
     )
@@ -90,10 +95,47 @@ m_driverController
     Commands.sequence(
         Commands.run(
           () -> {
+            //input = Math.min(((input+0.01)), 1.0) ;
+            motorName.set(0.2);
+          }
+        )
+    )
+)
+.onFalse(
+  Commands.run(
+          () -> {
+            input = 0.0;
+          }
+        )
+);
+
+m_driverController
+.b()
+.onTrue(
+    Commands.sequence(
+        Commands.run(
+          () -> {
+            motorName.set(0.0);
+          }
+        )
+    )
+)
+.whileTrue(
+    Commands.sequence(
+        Commands.run(
+          () -> {
+            //input = Math.min(((input+0.01)), 1.0) ;
             motorName.set(-1.0);
           }
         )
     )
+)
+.onFalse(
+  Commands.run(
+          () -> {
+            input = 0.0;
+          }
+        )
 );
 
   }
