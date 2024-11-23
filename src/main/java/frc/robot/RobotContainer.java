@@ -18,6 +18,7 @@ import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants.AutoConstants;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.ModuleConstants;
@@ -60,6 +61,8 @@ public class RobotContainer {
   public RobotContainer() {
 
     ShuffleboardTab diagnosticsTab = Shuffleboard.getTab("Diagnostics");
+
+    //ShuffleboardTab diagnosticsTab = Shuffleboard.getTab("Diagnostics");
 
     motorSpeedEntry = diagnosticsTab.add("Motor Speed", 0).getEntry();
     robotStatusEntry = diagnosticsTab.add("Robot Status", "OK").getEntry();
@@ -160,6 +163,9 @@ m_driverController
   public void updateShuffleboard(double motorSpeed, String status) {
     motorSpeedEntry.setDouble(motorSpeed);
     robotStatusEntry.setString(status);
+
+    SmartDashboard.putNumber("Motor Speed", motorSpeed);
+    SmartDashboard.putString("Status", status);
   }
 
   /**
